@@ -40,7 +40,7 @@
 ```
 
 
-## 安装
+## 安装:
 ```
 python setup.py install
 ```
@@ -48,6 +48,13 @@ python setup.py install
 ## 使用:
 ```
   ttracer 目标文件.py  目标文件的参数
+```
+
+## 注意:
+目标文件应该是通过这种方式启动
+```
+if __name__ == "__main__":
+  main()
 ```
 
 ## 配置:
