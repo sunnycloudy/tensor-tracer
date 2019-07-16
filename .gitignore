@@ -1,0 +1,13 @@
+.swp
+.DS_Store
+#eclipse的project文件, 有时用emacs来看git history
+.project
+\#*\#
+.\#*
+__pycache__
+
+#python setup.py相关的文件
+dist
+build
+*.egg-info
+.python-version

@@ -1,0 +1,18 @@
+#!/usr/bin/env python3
+#import fire
+from fire.core import Fire
+from tensor_tracer import ttracer
+import sys
+
+class TtracerCmd(object):
+  """..."""
+  def start(self, target_file):
+    
+    print(sys.argv)
+    sys.argv = sys.argv[2:]
+    print(sys.argv)
+
+    ttracer.start(target_file)
+
+if __name__ == '__main__':
+  Fire(TtracerCmd)

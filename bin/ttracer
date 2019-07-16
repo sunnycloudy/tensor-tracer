@@ -1,0 +1,7 @@
+#!/usr/bin/env python3
+import os
+import sys
+print(sys.argv)
+cmd = " ".join(["ttracer_invoker", "start"] + sys.argv[1:])
+print(cmd)
+os.system(cmd)
