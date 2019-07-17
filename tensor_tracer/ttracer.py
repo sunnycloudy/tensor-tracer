@@ -136,7 +136,7 @@ def traceit(frame, event, arg, indent=[0]):
               format_trace_account =  '{:>5d}'.format(trace_account)
               line = linecache.getline(f_name, lineno)
               #print('{:20}'.format("[only once:]") + str(format_trace_account) + " " * indent[0] + "  |L %s|    %s" % (format_lineno, line.rstrip()))
-              print('{:20}'.format("[only once:]") + str(format_trace_account) +  "  |L %s|    %s" % (format_lineno, line.rstrip()))
+              print('{:20}'.format("[only once]") + ":" + str(format_trace_account) +  "  |L %s|    %s" % (format_lineno, line.rstrip()))
 
           else:
             trace_account += 1
