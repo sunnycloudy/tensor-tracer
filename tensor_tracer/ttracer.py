@@ -7,7 +7,7 @@ import torch
 
 
 def print_self(obj):
-  print("------ print self ------")
+  #print("------ print self ------")
   #print(len(list(obj.__dict__)))
   for k,v in obj.__dict__.items():
     if type(v) ==  torch.Tensor:
@@ -16,10 +16,17 @@ def print_self(obj):
       print("[var:] "+k+" [numpy.ndarray#shape:"+str(v.shape)+"]")
     elif type(v) == list:
       print("[var:] "+k+" [list#length:"+str(len(v))+"]")
+    elif type(v) == dict:
+      print("[var:] "+k+" [dict#length:"+str(len(v))+"]")
     elif type(v) == float or type(v) == int:
-      print("[var:] "+k+ " [str#value:"+str(v)+"]")
+      print("[var:] "+k+ " [float or int#value:"+str(v)+"]")
+    elif type(v) == str:
+      print("[var:] "+k+ " [str#value:\""+str(v)+"\"]")
+    elif type(v) == bool:
+      print("[var:] "+k+ " [bool#value:\""+str(v)+"\"]")
     else:
       print("[var:] "+k+ " [type not included:]" + str(type(v)) + "<id:" + str(id(v)) + ">")
+
 
 def print_items(frame):
 #      return frame.f_locals.items() 
@@ -31,11 +38,17 @@ def print_items(frame):
 #   print xxx
     elif type(v) == list:
       print("[arg:] "+k+" [list#length:"+str(len(v))+"]")
+    elif type(v) == dict:
+      print("[var:] "+k+" [dict#length:"+str(len(v))+"]")
 #   print xxx
     elif type(v) == float or type(v) == int:
-      print("[arg:] "+k+ " [str#value:"+str(v) + "]")
+      print("[arg:] "+k+ " [float or int#value:"+str(v) + "]")
+    elif type(v) == str:
+      print("[var:] "+k+ " [str#value:\""+str(v)+"\"]")
 #   print (xxx)
 #   print xxx
+    elif type(v) == bool:
+      print("[var:] "+k+ " [bool#value:\""+str(v)+"\"]")
     elif k == "self":
       print_self(v)
     else:
