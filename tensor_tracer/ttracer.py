@@ -4,6 +4,7 @@ import os
 import inspect
 import numpy
 import torch
+import ntpath
 
 
 def print_self(obj):
@@ -83,7 +84,8 @@ def traceit(frame, event, arg, indent=[0]):
           trace_account += 1
           indent[0] += 4
           #print("-" * indent[0] + "> [ call function", frame.f_code.co_name, "]")
-          print(str(trace_account) + "-" * indent[0] + "> [ call function",_get_func_name(frame), "]")
+          #ntpath.basename(frame.f_code.co_filename) + ":" + 
+          print(str(trace_account)  + "-" * indent[0] + "> [ call function",_get_func_name(frame), "]")
           #print(frame.f_code.co_varnames)
           #if len(frame.f_code.co_varnames) > 2:
           #  print(exec(frame.f_code.co_varnames[1]))
