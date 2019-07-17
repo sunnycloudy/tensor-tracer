@@ -67,4 +67,5 @@ maxline=20000                                    #代表tracer会跟踪的行数
 ignore_lines = {                                 #代表会忽略的文件中的行, 每个函数的call内只会打印一次.
   "utils/datasets.py": [65,66]
 }
+ignore_functions = ["<listcomp>", "<dictcomp>"]  #代表会忽略的函数的调用, 一次都不打印
 ```

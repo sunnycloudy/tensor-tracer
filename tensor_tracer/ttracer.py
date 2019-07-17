@@ -64,7 +64,7 @@ def traceit(frame, event, arg, indent=[0]):
     if trace_account == trace_account_max:
       exit(0)
     if event == "call":
-        if ( frame.f_code.co_filename in  target_files and frame.f_code.co_name != "log_dbg_var"):
+        if ( frame.f_code.co_filename in  target_files and (frame.f_code.co_name not in trace_ignore_functions)):
           print("--"*6+frame.f_code.co_filename+"--"*6)
           trace_repeat[_get_func_name(frame)] = {}
           trace_account += 1
@@ -85,7 +85,7 @@ def traceit(frame, event, arg, indent=[0]):
 
 
     elif event == "return":
-        if ( frame.f_code.co_filename in target_files and frame.f_code.co_name != "log_dbg_var"):
+        if ( frame.f_code.co_filename in target_files and (frame.f_code.co_name not in trace_ignore_functions)):
           #print(target_file)
           #print("--"*6+frame.f_code.co_filename+"--"*6)
           trace_account += 1
@@ -96,7 +96,7 @@ def traceit(frame, event, arg, indent=[0]):
           indent[0] -= 4
 
     if event == "line":
-        if ( frame.f_code.co_filename in target_files and frame.f_code.co_name != "log_dbg_var"):
+        if ( frame.f_code.co_filename in target_files and (frame.f_code.co_name not in trace_ignore_functions)):
           #print(target_file)
 
           lineno = frame.f_lineno
@@ -125,6 +125,7 @@ def traceit(frame, event, arg, indent=[0]):
 sys.settrace(traceit)
 target_files = []
 trace_ignore_lines = {}
+trace_ignore_functions = []
 
 def start(path):
   print(path)
@@ -133,6 +134,7 @@ def start(path):
   global target_files
   global trace_account_max
   global trace_ignore_lines
+  global trace_ignore_functions
 
   pwd = os.getcwd()
   #print(pwd)
@@ -154,6 +156,7 @@ def start(path):
   config = __import__("tt_config")
   target_files = target_files + [ os.path.abspath(path_in_config) for path_in_config in config.target_files]
   trace_account_max = config.maxline
+  trace_ignore_functions = config.ignore_functions
 
   #改造key名中的路径,为abspath
   for key in config.ignore_lines:
