@@ -11,6 +11,7 @@ def print_self(obj):
   #print("------ print self ------")
   #print(len(list(obj.__dict__)))
   for k,v in obj.__dict__.items():
+    k = '{:20}'.format(k)
     if type(v) ==  torch.Tensor:
       print("[var:] "+k+" [torch.Tensor#size:"+str(v.size())+"]")
     elif type(v) ==  numpy.ndarray:
@@ -32,6 +33,7 @@ def print_self(obj):
 def print_items(frame):
 #      return frame.f_locals.items() 
   for k,v in frame.f_locals.items():
+    k = '{:20}'.format(k)
     if type(v) ==  torch.Tensor:
       print("[arg:] "+k+" [torch.Tensor#size:"+str(v.size())+"]")
     elif type(v) ==  numpy.ndarray:
@@ -78,14 +80,16 @@ def traceit(frame, event, arg, indent=[0]):
     if trace_account == trace_account_max:
       exit(0)
     if event == "call":
-        if ( frame.f_code.co_filename in  target_files and (frame.f_code.co_name not in trace_ignore_functions)):
+        f_name = frame.f_code.co_filename
+        if f_name in  target_files and frame.f_code.co_name not in trace_ignore_functions:
           print("--"*6+frame.f_code.co_filename+"--"*6)
           trace_repeat[_get_func_name(frame)] = {}
           trace_account += 1
+          format_trace_account =  '{:>5d}'.format(trace_account)
           indent[0] += 4
           #print("-" * indent[0] + "> [ call function", frame.f_code.co_name, "]")
-          #ntpath.basename(frame.f_code.co_filename) + ":" + 
-          print(str(trace_account)  + "-" * indent[0] + "> [ call function",_get_func_name(frame), "]")
+          #print('{:20}'.format(ntpath.basename(f_name)) + ":" + str(trace_account)  + "-" * indent[0] + "> [ call function",_get_func_name(frame), "]")
+          print('{:20}'.format(ntpath.basename(f_name)) + ":" + str(format_trace_account)  + "  |" + "[ call function",_get_func_name(frame), "]")
           #print(frame.f_code.co_varnames)
           #if len(frame.f_code.co_varnames) > 2:
           #  print(exec(frame.f_code.co_varnames[1]))
@@ -95,28 +99,33 @@ def traceit(frame, event, arg, indent=[0]):
           #print(frame.f_locals.items())
 
           lineno = frame.f_lineno
+          format_lineno = '{:>4d}'.format(lineno)
           line = linecache.getline(frame.f_code.co_filename, lineno)
-          print(str(trace_account) + " " * indent[0] + "  |line %d|    %s" % (lineno, line.rstrip()))
+          #print(str(trace_account) + " " * indent[0] + "  |line %d|    %s" % (lineno, line.rstrip()))
+          print('{:20}'.format(ntpath.basename(f_name)) + ":" + str(format_trace_account) + "  |L %s|    %s" % (format_lineno, line.rstrip()))
 
 
     elif event == "return":
-        if ( frame.f_code.co_filename in target_files and (frame.f_code.co_name not in trace_ignore_functions)):
+        f_name = frame.f_code.co_filename
+        if f_name in target_files and frame.f_code.co_name not in trace_ignore_functions:
           #print(target_file)
           #print("--"*6+frame.f_code.co_filename+"--"*6)
           trace_account += 1
+          format_trace_account =  '{:>5d}'.format(trace_account)
           #print("-" * indent[0] + "> [ call function",_get_func_name(frame), "]")
           #print("<" + "-" * indent[0], "[ exit function", frame.f_code.co_name, "]")
-          print(str(trace_account) + "<" + "-" * indent[0], "[ exit function", _get_func_name(frame), "]")
+          #print('{:20}'.format(ntpath.basename(f_name)) + ":" + str(format_trace_account) + "<" + "-" * indent[0], "[ exit function", _get_func_name(frame), "]")
+          print('{:20}'.format(ntpath.basename(f_name)) + ":" + str(format_trace_account) + "  |" + "[ exit function", _get_func_name(frame), "]")
 
           indent[0] -= 4
 
     if event == "line":
-        if ( frame.f_code.co_filename in target_files and (frame.f_code.co_name not in trace_ignore_functions)):
+        f_name = frame.f_code.co_filename
+        if f_name in target_files and frame.f_code.co_name not in trace_ignore_functions:
           #print(target_file)
 
           lineno = frame.f_lineno
-          f_name = frame.f_code.co_filename
-          
+          format_lineno = '{:>4d}'.format(lineno)
           if f_name in  trace_ignore_lines and lineno in  trace_ignore_lines[f_name]:
             if lineno in trace_repeat[_get_func_name(frame)]:
               "do nothing"
@@ -124,13 +133,17 @@ def traceit(frame, event, arg, indent=[0]):
             else:
               trace_repeat[_get_func_name(frame)][lineno] = 1   #只打印这么一次
               trace_account += 1
+              format_trace_account =  '{:>5d}'.format(trace_account)
               line = linecache.getline(f_name, lineno)
-              print("[only once:]" + str(trace_account) + " " * indent[0] + "  |line %d|    %s" % (lineno, line.rstrip()))
+              #print('{:20}'.format("[only once:]") + str(format_trace_account) + " " * indent[0] + "  |L %s|    %s" % (format_lineno, line.rstrip()))
+              print('{:20}'.format("[only once:]") + str(format_trace_account) +  "  |L %s|    %s" % (format_lineno, line.rstrip()))
 
           else:
             trace_account += 1
+            format_trace_account =  '{:>5d}'.format(trace_account)
             line = linecache.getline(f_name, lineno)
-            print(str(trace_account) + " " * indent[0] + "  |line %d|    %s" % (lineno, line.rstrip()))
+            #print(ntpath.basename(f_name) + ":" + str(trace_account) + " " * indent[0] + "  |line %d|    %s" % (lineno, line.rstrip()))
+            print('{:20}'.format(ntpath.basename(f_name)) + ":" + str(format_trace_account) + "  |L %s|    %s" % (format_lineno, line.rstrip()))
           #print(frame.f_code.co_varnames)
           #print(frame.f_locals.items())
           #发生return时清0
