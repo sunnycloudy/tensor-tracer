@@ -5,7 +5,10 @@ import inspect
 import numpy
 import torch
 import ntpath
+import textwrap 
 
+#def trace_var_wrap_print(k, line):
+#  print("\\\n".join(["[var:]" + k + l for l in textwrap.fill(line, 10).split("\n")]))
 
 def print_self(obj):
   #print("------ print self ------")
@@ -14,20 +17,28 @@ def print_self(obj):
     k = '{:20}'.format(k)
     if type(v) ==  torch.Tensor:
       print("[var:] "+k+" [torch.Tensor#size:"+str(v.size())+"]")
+      #trace_var_wrap_print(k, " [torch.Tensor#size:"+str(v.size())+"]")
     elif type(v) ==  numpy.ndarray:
       print("[var:] "+k+" [numpy.ndarray#shape:"+str(v.shape)+"]")
+      #trace_var_wrap_print(k, " [numpy.ndarray#shape:"+str(v.shape)+"]")
     elif type(v) == list:
       print("[var:] "+k+" [list#length:"+str(len(v))+"]")
+      #trace_var_wrap_print(k, " [list#length:"+str(len(v))+"]")
     elif type(v) == dict:
       print("[var:] "+k+" [dict#length:"+str(len(v))+"]")
+      #trace_var_wrap_print(k, " [dict#length:"+str(len(v))+"]")
     elif type(v) == float or type(v) == int:
       print("[var:] "+k+ " [float or int#value:"+str(v)+"]")
+      #trace_var_wrap_print(k, " [float or int#value:"+str(v)+"]")
     elif type(v) == str:
       print("[var:] "+k+ " [str#value:\""+str(v)+"\"]")
+      #trace_var_wrap_print(k, " [str#value:\""+str(v)+"\"]")
     elif type(v) == bool:
       print("[var:] "+k+ " [bool#value:\""+str(v)+"\"]")
+      #trace_var_wrap_print(k, " [bool#value:\""+str(v)+"\"]")
     else:
       print("[var:] "+k+ " [type not included:]" + str(type(v)) + "<id:" + str(id(v)) + ">")
+      #trace_var_wrap_print(k, " [type not included:]" + str(type(v)) + "<id:" + str(id(v)) + ">")
 
 
 def print_items(frame):
@@ -71,12 +82,14 @@ def _get_func_name(frame):
 trace_account = 0
 trace_account_max = 10000
 
+
 trace_repeat = {}
 def traceit(frame, event, arg, indent=[0]):
     global target_files
     global trace_account
     global trace_account_max
     global trace_repeat
+    global trace_width
     if trace_account == trace_account_max:
       exit(0)
     if event == "call":
@@ -102,7 +115,8 @@ def traceit(frame, event, arg, indent=[0]):
           format_lineno = '{:>4d}'.format(lineno)
           line = linecache.getline(frame.f_code.co_filename, lineno)
           #print(str(trace_account) + " " * indent[0] + "  |line %d|    %s" % (lineno, line.rstrip()))
-          print('{:20}'.format(ntpath.basename(f_name)) + ":" + str(format_trace_account) + "  |L %s|    %s" % (format_lineno, line.rstrip()))
+          #print('{:20}'.format(ntpath.basename(f_name)) + ":" + str(format_trace_account) + "  |L %s|    %s" % (format_lineno, line.rstrip()))
+          print("\\\n".join(['{:20}'.format(ntpath.basename(f_name)) + ":" + str(format_trace_account) +  "  |L %s|    %s" % (format_lineno, l.rstrip()) for l in textwrap.fill(line, trace_width).split("\n")]))
 
 
     elif event == "return":
@@ -136,14 +150,16 @@ def traceit(frame, event, arg, indent=[0]):
               format_trace_account =  '{:>5d}'.format(trace_account)
               line = linecache.getline(f_name, lineno)
               #print('{:20}'.format("[only once:]") + str(format_trace_account) + " " * indent[0] + "  |L %s|    %s" % (format_lineno, line.rstrip()))
-              print('{:20}'.format("[only once]") + ":" + str(format_trace_account) +  "  |L %s|    %s" % (format_lineno, line.rstrip()))
+              
+              print("\\\n".join(['{:20}'.format("[only once]") + ":" + str(format_trace_account) +  "  |L %s|    %s" % (format_lineno, l.rstrip()) for l in textwrap.fill(line, trace_width).split("\n")]))
 
           else:
             trace_account += 1
             format_trace_account =  '{:>5d}'.format(trace_account)
             line = linecache.getline(f_name, lineno)
             #print(ntpath.basename(f_name) + ":" + str(trace_account) + " " * indent[0] + "  |line %d|    %s" % (lineno, line.rstrip()))
-            print('{:20}'.format(ntpath.basename(f_name)) + ":" + str(format_trace_account) + "  |L %s|    %s" % (format_lineno, line.rstrip()))
+            #print('{:20}'.format(ntpath.basename(f_name)) + ":" + str(format_trace_account) + "  |L %s|    %s" % (format_lineno, line.rstrip()))
+            print("\\\n".join(['{:20}'.format(ntpath.basename(f_name)) + ":" + str(format_trace_account) +  "  |L %s|    %s" % (format_lineno, l.rstrip()) for l in textwrap.fill(line, trace_width).split("\n")]))
           #print(frame.f_code.co_varnames)
           #print(frame.f_locals.items())
           #发生return时清0
@@ -163,6 +179,7 @@ def start(path):
   global trace_account_max
   global trace_ignore_lines
   global trace_ignore_functions
+  global trace_width
 
   pwd = os.getcwd()
   #print(pwd)
@@ -185,6 +202,7 @@ def start(path):
   target_files = target_files + [ os.path.abspath(path_in_config) for path_in_config in config.target_files]
   trace_account_max = config.maxline
   trace_ignore_functions = config.ignore_functions
+  trace_width = config.trace_width
 
   #改造key名中的路径,为abspath
   for key in config.ignore_lines:
