@@ -68,4 +68,5 @@ ignore_lines = {                                 #代表会忽略的文件中的
   "utils/datasets.py": [65,66]
 }
 ignore_functions = ["<listcomp>", "<dictcomp>"]  #代表会忽略的函数的调用, 一次都不打印
+trace_width = 60                                 #代表了代码的自动换行的触发长度
 ```
