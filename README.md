@@ -5,40 +5,38 @@
 
 打印出的效果如下:
 ```
-2621--------> [ call function ListDataset#__getitem__ ]
------- print self ------
-[var:] img_files [list#length:117264]
-[var:] label_files [list#length:117264]
-[var:] img_size [float or int#value:416]
-[var:] max_objects [float or int#value:100]
-[var:] augment [bool#value:"True"]
-[var:] multiscale [bool#value:"True"]
-[var:] normalized_labels [bool#value:"True"]
-[var:] min_size [float or int#value:320]
-[var:] max_size [float or int#value:512]
-[var:] batch_count [float or int#value:0]
-[arg:] index [float or int#value:57956]
-2621          |line 77|        def __getitem__(self, index):
-2622          |line 83|            img_path = self.img_files[index % len(self.img_files)].rstrip()
-2623          |line 86|            img = transforms.ToTensor()(Image.open(img_path).convert('RGB'))
-2624          |line 89|            if len(img.shape) != 3:
-2625          |line 93|            _, h, w = img.shape
-2626          |line 94|            h_factor, w_factor = (h, w) if self.normalized_labels else (1, 1)
-2627          |line 96|            img, pad = pad_to_square(img, 0)
-------------/home/tst/PyTorch-YOLOv3/utils/datasets.py------------
-2628------------> [ call function pad_to_square ]
-[arg:] img [torch.Tensor#size:torch.Size([3, 483, 640])]
-[arg:] pad_value [float or int#value:0]
-2628              |line 15|    def pad_to_square(img, pad_value):
-2629              |line 16|        c, h, w = img.shape
-2630              |line 17|        dim_diff = np.abs(h - w)
-2631              |line 19|        pad1, pad2 = dim_diff // 2, dim_diff - dim_diff // 2
-2632              |line 21|        pad = (0, 0, pad1, pad2) if h <= w else (pad1, pad2, 0, 0)
-2633              |line 23|        img = F.pad(img, pad, "constant", value=pad_value)
-2634              |line 25|        return img, pad
-2635<------------ [ exit function pad_to_square ]
+------------/home/tst/PyTorch-YOLOv3/train.py------------
+train.py            :    1  |[ call function <module> ]
+[var:] __name__             [str#value:"train"]
+[arg:] __doc__              [type not included:]<class 'NoneType'><id:9098912>
+[var:] __package__          [str#value:""]
+[arg:] __loader__           [type not included:]<class '_frozen_importlib_external.SourceFileLoader'><id:139867071663800>
+[arg:] __spec__             [type not included:]<class '_frozen_importlib.ModuleSpec'><id:139867071663856>
+[var:] __file__             [str#value:"/home/tst/PyTorch-YOLOv3/train.py"]
+[var:] __cached__           [str#value:"/home/tst/PyTorch-YOLOv3/__pycache__/train.cpython-37.pyc"]
+[var:] __builtins__         [dict#length:153]
+train.py            :    1  |L    1|    from __future__ import division
+train.py            :    2  |L    1|    from __future__ import division
+train.py            :    3  |L    3|    from models import *
+------------/home/tst/PyTorch-YOLOv3/models.py------------
+models.py           :    4  |[ call function <module> ]
+[var:] __name__             [str#value:"models"]
+[arg:] __doc__              [type not included:]<class 'NoneType'><id:9098912>
+[var:] __package__          [str#value:""]
+[arg:] __loader__           [type not included:]<class '_frozen_importlib_external.SourceFileLoader'><id:139867071362552>
+[arg:] __spec__             [type not included:]<class '_frozen_importlib.ModuleSpec'><id:139867071362608>
+[var:] __file__             [str#value:"/home/tst/PyTorch-YOLOv3/models.py"]
+[var:] __cached__           [str#value:"/home/tst/PyTorch-YOLOv3/__pycache__/models.cpython-37.pyc"]
+[var:] __builtins__         [dict#length:153]
+models.py           :    4  |L    1|    from __future__ import division
+models.py           :    5  |L    1|    from __future__ import division
+models.py           :    6  |L    3|    import torch
+models.py           :    7  |L    4|    import torch.nn as nn
+models.py           :    8  |L    5|    import torch.nn.functional as F
+models.py           :    9  |L    6|    from torch.autograd import Variable
+models.py           :   10  |L    7|    import numpy as np
+models.py           :   11  |L    9|    from utils.parse_config import *
 ```
-
 
 ## 安装:
 ```
